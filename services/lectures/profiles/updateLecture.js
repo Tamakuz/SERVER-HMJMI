@@ -1,0 +1,93 @@
+import Lecture from "../../../models/lectureModel.js";
+import path from "path";
+import fs from "fs-extra";
+import createError from "../../../utils/error.js";
+import responseSuccess from "../../../utils/responseSuccess.js";
+
+const updateLecture = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { email, username, fullname, gender } = req.body;
+    const lecture = await Lecture.findById(id);
+    const __dirname = path.resolve();
+
+    if (!lecture) {
+      next(
+        createError(404, {
+          message:
+            "Maaf, data yang Anda minta tidak dapat ditemukan di server kami.",
+        })
+      );
+    }
+
+    lecture.email = email ? email : lecture.email;
+    lecture.username = username ? username : lecture.username;
+    lecture.detailuser.fullname = fullname ? fullname : lecture.detailuser.fullname;
+    lecture.detailuser.gender = gender ? gender : lecture.detailuser.gender;
+    lecture.updatedAt = Date.now();
+
+    try {
+      await lecture.validate()
+      if (req.file) {
+        const thumbnail = lecture.detailuser?.thumbnail;
+        if (!thumbnail) {
+          lecture.detailuser.thumbnail = req.file.filename;
+          await lecture.save();
+        } else {
+          const oldImage = path.join(
+            __dirname,
+            "uploads",
+            "images",
+            lecture.detailuser.thumbnail
+          );
+          if (fs.existsSync(oldImage)) {
+            fs.unlinkSync(oldImage);
+          }
+          lecture.detailuser.thumbnail = req.file.filename;
+          await lecture.save();
+        }
+      }
+    } catch (error) {
+      //! Handle validation error
+      const errors = error.errors;
+      let message;
+
+      const requiredProps = [
+        "username",
+        "detailuser.fullname",
+        "detailuser.gender",
+        "email",
+      ];
+      const errorProp = Object.keys(errors).find((prop) =>
+        requiredProps.includes(prop)
+      );
+
+      if (req.file) {
+        const filePath = path.join(
+          __dirname,
+          "uploads",
+          "images",
+          req.file.filename
+        );
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+
+      if (errorProp) {
+        message = errors[errorProp].message;
+      } else {
+        message = error.message;
+      }
+      return next(createError(400, message));
+    }
+    
+    lecture.save();
+    responseSuccess(res, lecture);
+  } catch (error) {
+    console.log(error);
+    return next(createError(500, "Server Error"));
+  }
+};
+
+export default updateLecture
