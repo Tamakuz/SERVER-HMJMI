@@ -32,6 +32,7 @@ app.use(
 );
 
 //* Setup routes
+  app.get("/", (req, res) => res.send("Hello world"))
   app.use(config?.api?.prefix, routes);
 
 //* setup error response
