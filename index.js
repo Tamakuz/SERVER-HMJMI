@@ -33,7 +33,7 @@ app.use(
 
 //* Setup routes
   app.get("/", (req, res) => res.send("Hello world"))
-  app.use(config?.api?.prefix, routes);
+  app.use("/api", routes);
 
 //* setup error response
 app.use((err, req, res, next) => {
