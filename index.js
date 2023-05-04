@@ -6,20 +6,20 @@ import connectDB from "./utils/db.js";
 import listener from "./bin/index.js";
 import corsConfig from "./utils/cors.js";
 import config from "./config/index.js";
-import routes from "./apis/routes.js"
+import routes from "./apis/routes.js";
+import mongoose from "mongoose";
 
 //* Setup config procces
-dotenv.config()
+dotenv.config();
 
 //* Concect to DB
-connectDB()
+connectDB();
 
 const app = express();
 const __dirname = config.rootPath;
 
-
 //* Setup MD Cors
-corsConfig({app})
+corsConfig({ app });
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,8 +32,7 @@ app.use(
 );
 
 //* Setup routes
-  app.get("/", (req, res) => res.send("Hello world"))
-  app.use("/api", routes);
+app.use("/api", routes);
 
 //* setup error response
 app.use((err, req, res, next) => {
@@ -49,4 +48,4 @@ app.use((err, req, res, next) => {
 });
 
 //* Runner a Server
-listener({app})
+listener({ app });
