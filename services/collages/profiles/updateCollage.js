@@ -92,18 +92,6 @@ const updateCollage = async (req, res, next) => {
         requiredProps.includes(prop)
       );
 
-      if (req.file) {
-        const filePath = path.join(
-          __dirname,
-          "uploads",
-          "images",
-          req.file.filename
-        );
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-      }
-
       if (errorProp) {
         message = errors[errorProp].message;
       } else {
