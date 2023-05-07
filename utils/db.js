@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connectDB = () => {
-  mongoose
+  mongoose 
     .connect(
       `mongodb+srv://manajemeninformatika:4FusaCyZbDL5ojk0@sever-hmjmi.ka89kiw.mongodb.net/server-hmjmi?retryWrites=true&w=majority&ssl=true`
     )

@@ -3,6 +3,7 @@ import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
 import fs from "fs-extra";
 import path from "path";
+import admin from "firebase-admin";
 
 const updateWork = async (req, res, next) => {
   try {
@@ -33,27 +34,47 @@ const updateWork = async (req, res, next) => {
     try {
       await work.validate();
       if (req.file) {
+        const bucket = admin.storage().bucket();
         const thumbnail = work.thumbnail;
+        const filePath = req.file.path;
+
         if (!thumbnail) {
+          const fileUpload = bucket.file(`works/${req.file.filename}`);
+          const fileReadStream = fs.createReadStream(filePath);
+          const fileWriteStream = fileUpload.createWriteStream({
+            metadata: {
+              contentType: req.file.mimetype,
+            },
+          });
+
+          //* menyimpan file
+          fileReadStream.pipe(fileWriteStream);
+
           work.thumbnail = req.file.filename;
-          await work.save();
         } else {
-          const oldImage = path.join(
-            __dirname,
-            "uploads",
-            "images",
-            work.thumbnail
-          );
-          if (fs.existsSync(oldImage)) {
-            fs.unlinkSync(oldImage);
-          }
+          // Ambil referensi ke file yang ingin diganti
+          const oldImage = bucket.file(`works/${thumbnail}`);
+          const newImage = bucket.file(`works/${req.file.filename}`);
+          const fileReadStreamNew = fs.createReadStream(req.file.path);
+          const fileWriteStreamNew = newImage.createWriteStream({
+            metadata: {
+              contentType: req.file.mimetype,
+            },
+          });
+
+          //* Hapus file lama
+          await oldImage.delete();
+
+          //* menyimpan file baru
+          fileReadStreamNew.pipe(fileWriteStreamNew);
+
+          //* Mengubah path foto di database
           work.thumbnail = req.file.filename;
-          await work.save();
         }
       }
 
       //* Simpan data work dan muncul response 200
-      work.save();
+      await work.save();
       responseSuccess(res, work);
     } catch (error) {
       const errors = error.errors;

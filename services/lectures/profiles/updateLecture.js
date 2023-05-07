@@ -1,6 +1,7 @@
 import Lecture from "../../../models/lectureModel.js";
 import path from "path";
 import fs from "fs-extra";
+import admin from "firebase-admin";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
 
@@ -29,22 +30,42 @@ const updateLecture = async (req, res, next) => {
     try {
       await lecture.validate()
       if (req.file) {
+        const bucket = admin.storage().bucket();
         const thumbnail = lecture.detailuser?.thumbnail;
+        const filePath = req.file.path;
+        
         if (!thumbnail) {
+          const fileUpload = bucket.file(`lectures/${req.file.filename}`);
+          const fileReadStream = fs.createReadStream(filePath);
+          const fileWriteStream = fileUpload.createWriteStream({
+            metadata: {
+              contentType: req.file.mimetype,
+            },
+          });
+
+          //* menyimpan file
+          fileReadStream.pipe(fileWriteStream);
+
           lecture.detailuser.thumbnail = req.file.filename;
-          await lecture.save();
         } else {
-          const oldImage = path.join(
-            __dirname,
-            "uploads",
-            "images",
-            lecture.detailuser.thumbnail
-          );
-          if (fs.existsSync(oldImage)) {
-            fs.unlinkSync(oldImage);
-          }
+          // Ambil referensi ke file yang ingin diganti
+          const oldImage = bucket.file(`lectures/${thumbnail}`);
+          const newImage = bucket.file(`lectures/${req.file.filename}`);
+          const fileReadStreamNew = fs.createReadStream(filePath);
+          const fileWriteStreamNew = newImage.createWriteStream({
+            metadata: {
+              contentType: req.file.mimetype,
+            },
+          });
+
+          //* Hapus file lama
+          await oldImage.delete();
+
+          //* menyimpan file baru
+          fileReadStreamNew.pipe(fileWriteStreamNew);
+
+          //* Mengubah path foto di database
           lecture.detailuser.thumbnail = req.file.filename;
-          await lecture.save();
         }
       }
     } catch (error) {
@@ -82,7 +103,7 @@ const updateLecture = async (req, res, next) => {
       return next(createError(400, message));
     }
     
-    lecture.save();
+    await lecture.save();
     responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);

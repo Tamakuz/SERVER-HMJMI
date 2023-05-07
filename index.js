@@ -7,13 +7,16 @@ import listener from "./bin/index.js";
 import corsConfig from "./utils/cors.js";
 import config from "./config/index.js";
 import routes from "./apis/routes.js";
-import mongoose from "mongoose";
+import firebaseConnect from "./firebase/index.js";
 
 //* Setup config procces
 dotenv.config();
 
 //* Concect to DB
 connectDB();
+
+//* Firebase storage connect
+firebaseConnect()
 
 const app = express();
 const __dirname = config.rootPath;

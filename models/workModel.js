@@ -20,7 +20,6 @@ const workSchema = new mongoose.Schema({
   },
   thumbnail: {
     type: String,
-    required: [true, "Thumbnail tidak boleh kosong"],
   },
   detailcollage: {
     type: ObjectId,
