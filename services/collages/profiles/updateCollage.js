@@ -53,7 +53,7 @@ const updateCollage = async (req, res, next) => {
           });
 
           //* menyimpan file
-          fileReadStream.pipe(fileWriteStream);
+          await fileReadStream.pipe(fileWriteStream);
 
           collage.detailuser.thumbnail = req.file.filename;
         } else {
@@ -71,7 +71,7 @@ const updateCollage = async (req, res, next) => {
           await oldImage.delete();
 
           //* menyimpan file baru
-          fileReadStreamNew.pipe(fileWriteStreamNew);
+          await fileReadStreamNew.pipe(fileWriteStreamNew);
 
           //* Mengubah path foto di database
           collage.detailuser.thumbnail = req.file.filename;
