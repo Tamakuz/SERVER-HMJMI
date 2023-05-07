@@ -44,7 +44,7 @@ const updateCollage = async (req, res, next) => {
 
         //* Handle jika path file tidak ada
         if (!thumbnail) {
-          const fileUpload = bucket.file(`collages/${req.file.filename}`);
+          const fileUpload = bucket.file(req.file.filename);
           const fileReadStream = fs.createReadStream(filePath);
           const fileWriteStream = fileUpload.createWriteStream({
             metadata: {
@@ -58,8 +58,8 @@ const updateCollage = async (req, res, next) => {
           collage.detailuser.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
-          const oldImage = bucket.file(`collages/${thumbnail}`);
-          const newImage = bucket.file(`collages/${req.file.filename}`);
+          const oldImage = bucket.file(thumbnail);
+          const newImage = bucket.file(req.file.filename);
           const fileReadStreamNew = fs.createReadStream(req.file.path);
           const fileWriteStreamNew = newImage.createWriteStream({
             metadata: {
