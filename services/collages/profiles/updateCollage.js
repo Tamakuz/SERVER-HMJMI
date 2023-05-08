@@ -92,7 +92,8 @@ const updateCollage = async (req, res, next) => {
   } catch (error) {
     // console.log(error);
     //! Debug Error
-    next(createError(500, error._message));
+    // next(createError(500, error._message));
+    res.send({error})
   }
 };
 
