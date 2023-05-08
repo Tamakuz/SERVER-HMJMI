@@ -33,37 +33,26 @@ const updateLecture = async (req, res, next) => {
       if (req.file) {
         const bucket = admin.storage().bucket();
         const thumbnail = lecture.detailuser?.thumbnail;
-        const filePath = req.file.path;
+        const file = req.file
+        const destination = `lectures/${file.filename}`
 
         if (!thumbnail) {
-          const fileUpload = bucket.file(`lectures/${req.file.filename}`);
-          const fileReadStream = fs.createReadStream(filePath);
-          const fileWriteStream = fileUpload.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
           });
-
-          //* menyimpan file
-          fileReadStream.pipe(fileWriteStream);
 
           lecture.detailuser.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
           const oldImage = bucket.file(`lectures/${thumbnail}`);
-          const newImage = bucket.file(`lectures/${req.file.filename}`);
-          const fileReadStreamNew = fs.createReadStream(filePath);
-          const fileWriteStreamNew = newImage.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
+          
+          await oldImage.delete()
+          
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
           });
-
-          //* Hapus file lama
-          await oldImage.delete();
-
-          //* menyimpan file baru
-          fileReadStreamNew.pipe(fileWriteStreamNew);
 
           //* Mengubah path foto di database
           lecture.detailuser.thumbnail = req.file.filename;
@@ -72,6 +61,7 @@ const updateLecture = async (req, res, next) => {
     } catch (error) {
       //! Handle validation error
       const errors = error.errors;
+      // console.log(errors);
       let message;
 
       const requiredProps = [
