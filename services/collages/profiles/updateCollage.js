@@ -20,9 +20,6 @@ const updateCollage = async (req, res, next) => {
       );
     }
 
-    //* Mengetahui letak directory saat ini
-    const __dirname = path.resolve();
-
     collage.email = email ? email : collage.email;
     collage.username = username ? username : collage.username;
     collage.detailuser.fullname = fullname
@@ -92,8 +89,7 @@ const updateCollage = async (req, res, next) => {
   } catch (error) {
     // console.log(error);
     //! Debug Error
-    // next(createError(500, error._message));
-    res.send({error})
+    next(createError(500, error._message));
   }
 };
 
