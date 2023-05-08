@@ -45,6 +45,11 @@ const updateLecture = async (req, res, next) => {
           //* menyimpan file
           fileReadStream.pipe(fileWriteStream);
 
+          fileWriteStream.on('error', (error) => {
+            console.log(error);
+            res.status(500).send('Upload failed');
+          });
+
           fileWriteStream.on('finish', () => {
             const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
             res.status(200).send({publicUrl});
@@ -98,10 +103,10 @@ const updateLecture = async (req, res, next) => {
     }
     
     await lecture.save();
-    // responseSuccess(res, lecture);
+    responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);
-    // return next(createError(500, error));
+    return next(createError(500, error));
     return res.send(error)
   }
 };
