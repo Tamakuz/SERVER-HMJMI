@@ -22,17 +22,19 @@ const updateLecture = async (req, res, next) => {
 
     lecture.email = email ? email : lecture.email;
     lecture.username = username ? username : lecture.username;
-    lecture.detailuser.fullname = fullname ? fullname : lecture.detailuser.fullname;
+    lecture.detailuser.fullname = fullname
+      ? fullname
+      : lecture.detailuser.fullname;
     lecture.detailuser.gender = gender ? gender : lecture.detailuser.gender;
     lecture.updatedAt = Date.now();
 
     try {
-      await lecture.validate()
+      await lecture.validate();
       if (req.file) {
         const bucket = admin.storage().bucket();
         const thumbnail = lecture.detailuser?.thumbnail;
         const filePath = req.file.path;
-        
+
         if (!thumbnail) {
           const fileUpload = bucket.file(`lectures/${req.file.filename}`);
           const fileReadStream = fs.createReadStream(filePath);
@@ -44,18 +46,6 @@ const updateLecture = async (req, res, next) => {
 
           //* menyimpan file
           fileReadStream.pipe(fileWriteStream);
-
-          fileWriteStream.on('error', (error) => {
-            console.log(error);
-            res.status(500).send('Upload failed');
-          });
-
-          fileWriteStream.on('finish', () => {
-            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
-            res.status(200).send({publicUrl});
-          });
-
-          fileWriteStream.end(file.buffer)
 
           lecture.detailuser.thumbnail = req.file.filename;
         } else {
@@ -101,14 +91,13 @@ const updateLecture = async (req, res, next) => {
       }
       return next(createError(400, message));
     }
-    
+
     await lecture.save();
     responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);
     return next(createError(500, error));
-    return res.send(error)
   }
 };
 
-export default updateLecture
+export default updateLecture;
