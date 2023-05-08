@@ -98,11 +98,11 @@ const updateLecture = async (req, res, next) => {
       return next(createError(400, message));
     }
     
-    lecture.save();
+    await lecture.save();
     // responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);
-    return next(createError(500, "Server Error"));
+    return next(createError(500, error));
   }
 };
 
