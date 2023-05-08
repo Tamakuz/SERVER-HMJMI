@@ -46,6 +46,13 @@ const updateLecture = async (req, res, next) => {
           //* menyimpan file
           fileReadStream.pipe(fileWriteStream);
 
+          fileWriteStream.on('finish', () => {
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
+            res.status(200).send({publicUrl});
+          });
+
+          fileWriteStream.end(file.buffer)
+
           lecture.detailuser.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
@@ -83,18 +90,6 @@ const updateLecture = async (req, res, next) => {
         requiredProps.includes(prop)
       );
 
-      if (req.file) {
-        const filePath = path.join(
-          __dirname,
-          "uploads",
-          "images",
-          req.file.filename
-        );
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-      }
-
       if (errorProp) {
         message = errors[errorProp].message;
       } else {
@@ -103,8 +98,8 @@ const updateLecture = async (req, res, next) => {
       return next(createError(400, message));
     }
     
-    await lecture.save();
-    responseSuccess(res, lecture);
+    lecture.save();
+    // responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);
     return next(createError(500, "Server Error"));
