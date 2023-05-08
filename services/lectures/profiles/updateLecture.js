@@ -101,7 +101,8 @@ const updateLecture = async (req, res, next) => {
     // responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);
-    return next(createError(500, error));
+    // return next(createError(500, error));
+    return res.send(error)
   }
 };
 
