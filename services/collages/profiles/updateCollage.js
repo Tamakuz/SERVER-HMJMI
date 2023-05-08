@@ -44,7 +44,7 @@ const updateCollage = async (req, res, next) => {
 
         //* Handle jika path file tidak ada
         if (!thumbnail) {
-          const fileUpload = bucket.file(`collages/${req.file.filename}`);
+          const fileUpload = bucket.file(req.file.filename);
           const fileReadStream = fs.createReadStream(filePath);
           const fileWriteStream = fileUpload.createWriteStream({
             metadata: {
@@ -53,13 +53,13 @@ const updateCollage = async (req, res, next) => {
           });
 
           //* menyimpan file
-          fileReadStream.pipe(fileWriteStream);
+          await fileReadStream.pipe(fileWriteStream);
 
           collage.detailuser.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
-          const oldImage = bucket.file(`collages/${thumbnail}`);
-          const newImage = bucket.file(`collages/${req.file.filename}`);
+          const oldImage = bucket.file(thumbnail);
+          const newImage = bucket.file(req.file.filename);
           const fileReadStreamNew = fs.createReadStream(req.file.path);
           const fileWriteStreamNew = newImage.createWriteStream({
             metadata: {
@@ -71,7 +71,7 @@ const updateCollage = async (req, res, next) => {
           await oldImage.delete();
 
           //* menyimpan file baru
-          fileReadStreamNew.pipe(fileWriteStreamNew);
+          await fileReadStreamNew.pipe(fileWriteStreamNew);
 
           //* Mengubah path foto di database
           collage.detailuser.thumbnail = req.file.filename;
@@ -91,18 +91,6 @@ const updateCollage = async (req, res, next) => {
       const errorProp = Object.keys(errors).find((prop) =>
         requiredProps.includes(prop)
       );
-
-      if (req.file) {
-        const filePath = path.join(
-          __dirname,
-          "uploads",
-          "images",
-          req.file.filename
-        );
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-      }
 
       if (errorProp) {
         message = errors[errorProp].message;
