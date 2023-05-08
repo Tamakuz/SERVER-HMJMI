@@ -37,41 +37,28 @@ const updateCollage = async (req, res, next) => {
       //* Hanlde jika request berupa file
       if (req.file) {
         const bucket = admin.storage().bucket();
-
-        //* Dapatkan path file dari request
         const thumbnail = collage.detailuser?.thumbnail;
-        const filePath = req.file.path;
+        const file = req.file;
+        const destination = `collages/${file.filename}`;
 
         //* Handle jika path file tidak ada
         if (!thumbnail) {
-          const fileUpload = bucket.file(req.file.filename);
-          const fileReadStream = fs.createReadStream(filePath);
-          const fileWriteStream = fileUpload.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
           });
-
-          //* menyimpan file
-          await fileReadStream.pipe(fileWriteStream);
 
           collage.detailuser.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
-          const oldImage = bucket.file(thumbnail);
-          const newImage = bucket.file(req.file.filename);
-          const fileReadStreamNew = fs.createReadStream(req.file.path);
-          const fileWriteStreamNew = newImage.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
-          });
+          const oldImage = bucket.file(`collages/${thumbnail}`);
 
-          //* Hapus file lama
           await oldImage.delete();
 
-          //* menyimpan file baru
-          await fileReadStreamNew.pipe(fileWriteStreamNew);
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
+          });
 
           //* Mengubah path foto di database
           collage.detailuser.thumbnail = req.file.filename;

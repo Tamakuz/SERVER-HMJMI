@@ -36,37 +36,26 @@ const updateWork = async (req, res, next) => {
       if (req.file) {
         const bucket = admin.storage().bucket();
         const thumbnail = work.thumbnail;
-        const filePath = req.file.path;
+        const file = req.file;
+        const destination = `works/${file.filename}`;
 
         if (!thumbnail) {
-          const fileUpload = bucket.file(`works/${req.file.filename}`);
-          const fileReadStream = fs.createReadStream(filePath);
-          const fileWriteStream = fileUpload.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
           });
-
-          //* menyimpan file
-          fileReadStream.pipe(fileWriteStream);
 
           work.thumbnail = req.file.filename;
         } else {
           // Ambil referensi ke file yang ingin diganti
           const oldImage = bucket.file(`works/${thumbnail}`);
-          const newImage = bucket.file(`works/${req.file.filename}`);
-          const fileReadStreamNew = fs.createReadStream(req.file.path);
-          const fileWriteStreamNew = newImage.createWriteStream({
-            metadata: {
-              contentType: req.file.mimetype,
-            },
-          });
 
-          //* Hapus file lama
           await oldImage.delete();
 
-          //* menyimpan file baru
-          fileReadStreamNew.pipe(fileWriteStreamNew);
+          await bucket.upload(file.path, {
+            destination,
+            metadata: { contentType: file.mimetype },
+          });
 
           //* Mengubah path foto di database
           work.thumbnail = req.file.filename;
