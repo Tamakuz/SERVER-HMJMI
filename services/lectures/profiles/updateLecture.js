@@ -10,7 +10,6 @@ const updateLecture = async (req, res, next) => {
     const { id } = req.params;
     const { email, username, fullname, gender } = req.body;
     const lecture = await Lecture.findById(id);
-    const __dirname = path.resolve();
 
     if (!lecture) {
       next(
