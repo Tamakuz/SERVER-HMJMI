@@ -19,20 +19,20 @@ connectDB();
 firebaseConnect();
 
 const app = express();
-const __dirname = config.rootPath;
 
 //* Setup MD Cors
 corsConfig({ app });
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://tamakuz.github.io");
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-//* Setup image view
-app.use(
-  "/uploads/images",
-  express.static(path.join(__dirname, "uploads/images"))
-);
 
 //* Setup routes
 app.use("/api", routes);

@@ -13,7 +13,6 @@ const corsConfig = ({ app }) => {
         "https://tamakuz.github.io",
       ],
       credentials: true,
-      exposedHeaders: ["set-cookie"],
     })
   );
 };
