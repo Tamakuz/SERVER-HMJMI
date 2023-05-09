@@ -10,6 +10,7 @@ const corsConfig = ({ app }) => {
         /http:\/\/127\.0\.0\.1:\d+/,
         "http://localhost",
         "http://127.0.0.1",
+        "https://tamakuz.github.io",
       ],
       credentials: true,
       exposedHeaders: ["set-cookie"],
