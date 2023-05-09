@@ -27,6 +27,7 @@ corsConfig({ app });
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.disable("x-powered-by");
 
 //* Setup image view
 app.use(
