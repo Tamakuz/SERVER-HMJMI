@@ -2,7 +2,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import path from "path";
-import session from "express-session";
 import connectDB from "./utils/db.js";
 import listener from "./bin/index.js";
 import corsConfig from "./utils/cors.js";
@@ -28,19 +27,6 @@ corsConfig({ app });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  session({
-    secret: "secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
-    },
-  })
-);
 
 //* Setup image view
 app.use(
