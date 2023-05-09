@@ -1,5 +1,3 @@
-import path from "path";
-import fs from "fs-extra";
 import admin from "firebase-admin";
 import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
@@ -19,9 +17,6 @@ const updateCollage = async (req, res, next) => {
         "Maaf, data yang Anda minta tidak dapat ditemukan di server kami."
       );
     }
-
-    //* Mengetahui letak directory saat ini
-    const __dirname = path.resolve();
 
     collage.email = email ? email : collage.email;
     collage.username = username ? username : collage.username;

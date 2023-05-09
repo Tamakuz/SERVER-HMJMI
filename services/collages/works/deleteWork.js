@@ -2,17 +2,19 @@ import Work from "../../../models/workModel.js";
 import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
+import admin from "firebase-admin";
 
 const deleteWork = async (req, res, next) => {
   try {
     const { workId, collageId } = req.params;
+    const bucket = admin.storage().bucket();
 
     //* Mencari data work dan collage di db
     const work = await Work.findById(workId);
     const collage = await Collage.findById(collageId);
 
-    if(!work || !collage){
-      next(createError(404, "Data tidak ditemukan"))
+    if (!work || !collage) {
+      next(createError(404, "Data tidak ditemukan"));
     }
 
     //* Mencocokan data work dengan collage
@@ -22,10 +24,21 @@ const deleteWork = async (req, res, next) => {
       collage.workcollage.splice(index, 1);
       await collage.save();
 
+      //* hapus image work
+      if (work.thumbnail) {
+        const image = bucket.file(`works/${work.thumbnail}`);
+        await image.delete();
+      }
+
       //* Menghapus data work dan response
       await work.deleteOne();
       responseSuccess(res, { message: "Data berhasil dihapus" });
     } else {
+      //* hapus image work
+      if (work.thumbnail) {
+        const image = bucket.file(`works/${work.thumbnail}`);
+        await image.delete();
+      }
       //* Menghapus data work yang tidak terpakai
       await work.deleteOne();
 
@@ -43,4 +56,4 @@ const deleteWork = async (req, res, next) => {
   }
 };
 
-export default deleteWork
+export default deleteWork;
