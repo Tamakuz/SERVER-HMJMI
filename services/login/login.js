@@ -63,7 +63,7 @@ const login = async (req, res, next ) => {
       await res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "none",
+        sameSite: "lax",
       });
       responseSuccess(res, {accessToken})
     }
