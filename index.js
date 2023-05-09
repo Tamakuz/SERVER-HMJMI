@@ -25,8 +25,8 @@ const __dirname = config.rootPath;
 corsConfig({ app });
 
 app.use(express.json());
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.disable("x-powered-by");
 
 //* Setup image view
