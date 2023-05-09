@@ -6,8 +6,9 @@ const corsConfig = ({ app }) => {
   app.use(
     cors({
       origin: [
-        primaryDomainAccess,
-        "http://localhost:4000",
+        /http:\/\/localhost:\d+/,
+        /http:\/\/127\.0\.0\.1:\d+/,
+        "http://localhost",
         "http://127.0.0.1",
       ],
       credentials: true,
