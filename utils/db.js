@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = () => {
   mongoose
-    .connect(`mongodb://127.0.0.1:27017/server-hmjmi`)
+    .connect(`mongodb+srv://manajemeninformatika:QAtOvwimii0eanhT@sever-hmjmi.ka89kiw.mongodb.net/server-hmjmi?retryWrites=true&w=majority`)
     .then(() => {
       console.log("Connected to database");
     })
