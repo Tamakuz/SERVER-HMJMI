@@ -60,7 +60,12 @@ const login = async (req, res, next ) => {
         { expiresIn: "1d" }
       );
       await collage.updateOne({ refresh_token: refreshToken });
-      req.session.refreshtoken = refreshToken;
+      await res.cookie("refreshtoken", refreshToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: false
+      });
       responseSuccess(res, {accessToken})
     }
 
