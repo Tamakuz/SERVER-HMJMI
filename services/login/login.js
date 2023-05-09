@@ -36,6 +36,7 @@ const login = async (req, res, next ) => {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
         secure: true,
+        sameSite: "none",
       });
       responseSuccess(res, {accessToken})
     }
@@ -64,6 +65,7 @@ const login = async (req, res, next ) => {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
         secure: true,
+        sameSite: "none",
       });
       responseSuccess(res, {accessToken})
     }
