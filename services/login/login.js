@@ -61,7 +61,7 @@ const login = async (req, res, next ) => {
       await collage.updateOne({ refresh_token: refreshToken });
       res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
-        maxAge: 86400000,
+        maxAge: 24 * 60 * 60 * 1000,
       });
       responseSuccess(res, {accessToken})
     }
