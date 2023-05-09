@@ -73,6 +73,7 @@ const login = async (req, res, next ) => {
       next(createError(400, "Masukan username yang terdaftar"))
     }
   } catch (error) {
+    console.log(error);
     next(createError(500, "Server Error"))
   }
 };
