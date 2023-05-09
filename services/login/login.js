@@ -6,7 +6,7 @@ import config from "../../config/index.js";
 import createError from "../../utils/error.js";
 import responseSuccess from "../../utils/responseSuccess.js";
 
-const login = async (req, res, next ) => {
+const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const { accessTokenSecret, refreshTokenSecret } = config;
@@ -18,7 +18,7 @@ const login = async (req, res, next ) => {
       const matchLecture = await bcrypt.compare(password, lecture.password);
 
       if (!matchLecture) {
-        next(createError(400, "Wrong Password"))
+        next(createError(400, "Wrong Password"));
       }
 
       const lectureId = lecture._id;
@@ -36,8 +36,9 @@ const login = async (req, res, next ) => {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: "none",
+        secure: true, // tambahkan secure=true agar cookie hanya dikirim melalui HTTPS
       });
-      responseSuccess(res, {accessToken})
+      responseSuccess(res, { accessToken });
     }
 
     if (collage) {
@@ -54,28 +55,26 @@ const login = async (req, res, next ) => {
         accessTokenSecret,
         { expiresIn: "1d" }
       );
-      const refreshToken = jwt.sign(
-        { id: collageId },
-        refreshTokenSecret,
-        { expiresIn: "1d" }
-      );
+      const refreshToken = jwt.sign({ id: collageId }, refreshTokenSecret, {
+        expiresIn: "1d",
+      });
       await collage.updateOne({ refresh_token: refreshToken });
       await res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: "none",
-        secure: true
+        secure: true, // tambahkan secure=true agar cookie hanya dikirim melalui HTTPS
       });
-      responseSuccess(res, {accessToken})
+      responseSuccess(res, { accessToken });
     }
 
     if (!lecture || !collage) {
-      next(createError(400, "Masukan username yang terdaftar"))
+      next(createError(400, "Masukan username yang terdaftar"));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, "Server Error"))
+    next(createError(500, "Server Error"));
   }
 };
 
-export default login
+export default login;
