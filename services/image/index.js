@@ -7,7 +7,7 @@ const getImage = async (req, res, next) => {
     const file = bucket.file(filename);
     const [url] = await file.getSignedUrl({
       action: "read",
-      expires: Date.now() + 86400 * 1000;,
+      expires: Date.now() + 86400 * 1000,
     });
     res.status(200).sendFile(url);
   } catch (error) {
