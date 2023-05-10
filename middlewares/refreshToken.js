@@ -5,7 +5,8 @@ import config from "../config/index.js";
 
 const refreshToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshtoken;
+    const { key } = req.query;
+    console.log(key);
     const { accessTokenSecret, refreshTokenSecret } = config;
     const collage = await Collage.findOne({ refresh_token: refreshToken });
     const lecture = await Lecture.findOne({ refresh_token: refreshToken });
@@ -14,7 +15,7 @@ const refreshToken = async (req, res) => {
 
     if(lecture){
       jwt.verify(
-        refreshToken,
+        key,
         refreshTokenSecret,
         (err, decoded) => {
           if (err) return res.json({ msg: "unauthorization" });
@@ -34,7 +35,7 @@ const refreshToken = async (req, res) => {
 
     if(collage){
       jwt.verify(
-        refreshToken,
+        key,
         refreshTokenSecret,
         (err, decoded) => {
           if (err) return res.json({ msg: "unauthorization" });
