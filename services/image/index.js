@@ -9,7 +9,7 @@ const getImage = async (req, res, next) => {
       action: "read",
       expires: Date.now() + 86400 * 1000,
     });
-    res.status(200).sendFile(url);
+    res.status(200).send(url);
   } catch (error) {
     console.log(error);
   }
