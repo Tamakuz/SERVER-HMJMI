@@ -38,7 +38,7 @@ const login = async (req, res, next) => {
         sameSite: "none",
         secure: true, // tambahkan secure=true agar cookie hanya dikirim melalui HTTPS
       });
-      responseSuccess(res, { accessToken });
+      responseSuccess(res, { refreshToken });
     }
 
     if (collage) {
@@ -64,7 +64,7 @@ const login = async (req, res, next) => {
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: "none",
       });
-      responseSuccess(res, { accessToken });
+      responseSuccess(res, { refreshToken });
     }
 
     if (!lecture || !collage) {

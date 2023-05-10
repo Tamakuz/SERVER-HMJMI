@@ -23,13 +23,6 @@ const app = express();
 //* Setup MD Cors
 corsConfig({ app });
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://tamakuz.github.io");
-  res.header("Access-Control-Allow-Credentials", true);
-  next();
-});
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
