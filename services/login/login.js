@@ -32,12 +32,12 @@ const login = async (req, res, next) => {
         expiresIn: "1d",
       });
       await lecture.updateOne({ refresh_token: refreshToken });
-      res.cookie("refreshtoken", refreshToken, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "none",
-        secure: true, // tambahkan secure=true agar cookie hanya dikirim melalui HTTPS
-      });
+      // res.cookie("refreshtoken", refreshToken, {
+      //   httpOnly: true,
+      //   maxAge: 24 * 60 * 60 * 1000,
+      //   sameSite: "none",
+      //   secure: true, // tambahkan secure=true agar cookie hanya dikirim melalui HTTPS
+      // });
       responseSuccess(res, { refreshToken });
     }
 
@@ -59,11 +59,11 @@ const login = async (req, res, next) => {
         expiresIn: "1d",
       });
       await collage.updateOne({ refresh_token: refreshToken });
-      res.cookie("refreshtoken", refreshToken, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "none",
-      });
+      // res.cookie("refreshtoken", refreshToken, {
+      //   httpOnly: true,
+      //   maxAge: 24 * 60 * 60 * 1000,
+      //   sameSite: "none",
+      // });
       responseSuccess(res, { refreshToken });
     }
 
