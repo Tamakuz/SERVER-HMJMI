@@ -1,17 +1,22 @@
 import admin from "firebase-admin";
 
 const getImage = async (req, res, next) => {
-  try {
-    const bucket = admin.storage().bucket();
-    const { filename } = req.params;
-    const file = bucket.file(filename);
-    const [url] = await file.getSignedUrl({
-      action: "read",
-      expires: Date.now() + 86400 * 1000,
-    });
-    res.status(200).send(url);
-  } catch (error) {
-    console.log(error);
+  const { filename } = req.params;
+  const folderNames = ["collages", "lectures", "works"];
+  for (let i = 0; i < folderNames.length; i++) {
+    const folderName = folderNames[i];
+    const path = `${folderName}/${filename}`;
+    try {
+      const storageRef = admin.storage().bucket().file(path);
+      const url = await storageRef.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 86400 * 1000, // Set expiry date of the URL
+      });
+      res.status(200).json({ url });
+      return;
+    } catch (error) {
+      console.error(error);
+    }
   }
 };
 
