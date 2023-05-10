@@ -25,7 +25,6 @@ const createWork = async (req, res, next) => {
       desc,
       link,
       detailcollage : collageId,
-      thumbnail: req.file ? req.file.filename : "thumbnail",
       createdAt: Date.now(),
     });
 
