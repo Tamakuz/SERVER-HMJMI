@@ -53,7 +53,7 @@ const login = async (req, res, next) => {
         expiresIn: "1d",
       });
       await collage.updateOne({ refresh_token: refreshToken });
-      re.cookie("refreshtoken", refreshToken, {
+      res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
