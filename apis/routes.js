@@ -17,6 +17,7 @@ import getSingleWorkRoute from "./workRouters/getSingleWorkRoute.js";
 import loginRoute from "./jwtRouters/loginRoute.js";
 import refreshTokenRoute from "./jwtRouters/refreshTokenRoute.js";
 import logoutRoute from "./jwtRouters/logoutRoute.js";
+import getImageRouter from "./imageRouters/getImageRouter.js";
 
 const router = express.Router();
 
@@ -45,5 +46,8 @@ deleteWorkRoute({router})
 loginRoute({router})
 logoutRoute({router})
 refreshTokenRoute({router})
+
+//* get image
+getImageRouter({router})
 
 export default router
