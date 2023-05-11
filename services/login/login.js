@@ -42,8 +42,7 @@ const login = async (req, res, next) => {
     const response =
       (await authenticateUser(username, password, Lecture)) ||
       (await authenticateUser(username, password, Collage));
-
-      console.log(refreshToken);
+      console.log(response);
 
     responseSuccess(res, { response });
   } catch (error) {
