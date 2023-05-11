@@ -2,6 +2,7 @@ import Work from "./../../../models/workModel.js";
 import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
+import admin from "firebase-admin";
 
 const createWork = async (req, res, next) => {
   try {
@@ -20,16 +21,31 @@ const createWork = async (req, res, next) => {
       );
     }
 
+    //* Buat data work baru
     const work = new Work({
       title,
       desc,
       link,
-      detailcollage : collageId,
+      detailcollage: collageId,
       createdAt: Date.now(),
     });
 
     try {
+      //* Validasi data work
       await work.validate();
+      if (req.file) {
+        const bucket = admin.storage().bucket();
+        const file = req.file;
+        const destination = `works/${file.filename}`;
+
+        await bucket.upload(file.path, {
+          destination,
+          metadata: { contentType: file.mimetype },
+        });
+
+        work.thumbnail = req.file.filename;
+      }
+      await work.save();
     } catch (error) {
       const errors = error.errors;
       let message;
@@ -47,20 +63,20 @@ const createWork = async (req, res, next) => {
       return next(createError(400, message));
     }
 
-    //* Simpan rok di database
+    //* Simpan data work ke database
     await work.save();
 
-    //* Push / tambahkan data di collection Collage dan simpan
+    //* Tambahkan reference dari data work ke collection collage
     collage.workcollage.push(work._id);
     await collage.save();
 
-    //* Response
+    //* Response success
     responseSuccess(res, work);
   } catch (error) {
     console.log(error);
-    //! Jika data collage tidak ditemukan
+    //! Handle error ketika data collage tidak ditemukan
     next(createError(500, "Server Error"));
   }
 };
 
-export default createWork
+export default createWork;
