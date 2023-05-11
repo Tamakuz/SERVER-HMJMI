@@ -44,7 +44,12 @@ const login = async (req, res, next) => {
       (await authenticateUser(username, password, Collage));
       console.log(response);
 
-    responseSuccess(res, { response });
+      if(response.status === 400){
+        next(createError(response.status, response.message))
+      }else{
+        responseSuccess(res, {refresToken : response})
+      }
+    
   } catch (error) {
     console.log(error);
     res.status(500).send("Server Error");
