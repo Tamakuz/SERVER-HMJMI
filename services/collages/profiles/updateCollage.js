@@ -8,16 +8,20 @@ const updateCollage = async (req, res, next) => {
     const { id } = req.params;
     const { email, username, fullname, gender } = req.body;
 
-    //* Mencari 1 data mahasiswa
+    // Mencari 1 data mahasiswa berdasarkan id
     const collage = await Collage.findById(id);
 
+    // Throw error jika data mahasiswa tidak ditemukan
     if (!collage) {
-      throw createError(
-        404,
-        "Maaf, data yang Anda minta tidak dapat ditemukan di server kami."
+      return next(
+        createError(
+          404,
+          "Maaf, data yang Anda minta tidak dapat ditemukan di server kami."
+        )
       );
     }
 
+    // Update data mahasiswa
     collage.email = email ? email : collage.email;
     collage.username = username ? username : collage.username;
     collage.detailuser.fullname = fullname
@@ -27,17 +31,19 @@ const updateCollage = async (req, res, next) => {
     collage.updatedAt = Date.now();
 
     try {
-      //* Handle validasi success
+      // Handle validasi data mahasiswa
       await collage.validate();
-      //* Hanlde jika request berupa file
+
+      // Handle jika request berupa file
       if (req.file) {
         const bucket = admin.storage().bucket();
         const thumbnail = collage.detailuser?.thumbnail;
         const file = req.file;
         const destination = `collages/${file.filename}`;
 
-        //* Handle jika path file tidak ada
+        // Handle jika thumbnail tidak ada
         if (!thumbnail) {
+          // Upload file baru
           await bucket.upload(file.path, {
             destination,
             metadata: { contentType: file.mimetype },
@@ -45,25 +51,26 @@ const updateCollage = async (req, res, next) => {
 
           collage.detailuser.thumbnail = req.file.filename;
         } else {
-          // Ambil referensi ke file yang ingin diganti
+          // Delete file lama
           const oldImage = bucket.file(`collages/${thumbnail}`);
-
           await oldImage.delete();
 
+          // Upload file baru
           await bucket.upload(file.path, {
             destination,
             metadata: { contentType: file.mimetype },
           });
 
-          //* Mengubah path foto di database
+          // Update path foto di database
           collage.detailuser.thumbnail = req.file.filename;
         }
       }
     } catch (error) {
-      //! Handle validation error
+      //! Handle error validasi
       const errors = error.errors;
       let message;
 
+      // Mencari property yang bermasalah dalam validasi
       const requiredProps = [
         "username",
         "detailuser.fullname",
@@ -79,14 +86,17 @@ const updateCollage = async (req, res, next) => {
       } else {
         message = error.message;
       }
+      // Throw error jika validasi gagal
       return next(createError(400, message));
     }
 
+    // Simpan perubahan ke database
     await collage.save();
+    // Kirim respon sukses
     responseSuccess(res, collage);
   } catch (error) {
-    // console.log(error);
-    //! Debug Error
+    //! Handle error umum
+    // Debug error
     next(createError(500, error._message));
   }
 };
