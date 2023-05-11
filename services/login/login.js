@@ -39,13 +39,13 @@ const login = async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
-    const refreshToken =
+    const response =
       (await authenticateUser(username, password, Lecture)) ||
       (await authenticateUser(username, password, Collage));
 
       console.log(refreshToken);
 
-    responseSuccess(res, { refreshToken });
+    responseSuccess(res, { response });
   } catch (error) {
     console.log(error);
     res.status(500).send("Server Error");
