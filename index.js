@@ -1,11 +1,10 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import path from "path";
+import compression from "compression";
 import connectDB from "./utils/db.js";
 import listener from "./bin/index.js";
 import corsConfig from "./utils/cors.js";
-import config from "./config/index.js";
 import routes from "./apis/routes.js";
 import firebaseConnect from "./firebase/index.js";
 
@@ -26,6 +25,7 @@ corsConfig({ app });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(compression())
 
 //* Setup routes
 app.use("/api", routes);
