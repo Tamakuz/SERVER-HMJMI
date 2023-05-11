@@ -7,19 +7,18 @@ import createError from "../../utils/error.js";
 import responseSuccess from "../../utils/responseSuccess.js";
 
 const refreshTokenSecret = config.refreshTokenSecret;
-const refreshExpiresIn = config.refreshExpiresIn;
 
 const authenticateUser = async (username, password, model) => {
   const user = await model.findOne({ username: username });
 
   if (!user) {
-    throw createError(400, "Masukan username yang terdaftar");
+    return createError(400, "Masukan username yang terdaftar");
   }
 
   const match = await bcrypt.compare(password, user.password);
 
   if (!match) {
-    throw createError(400, "Wrong Password");
+    return createError(400, "Wrong Password");
   }
 
   const userId = user._id;
