@@ -35,13 +35,15 @@ const authenticateUser = async (username, password, model) => {
   return refreshToken;
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
     const refreshToken =
       (await authenticateUser(username, password, Lecture)) ||
       (await authenticateUser(username, password, Collage));
+
+      console.log(refreshToken);
 
     responseSuccess(res, { refreshToken });
   } catch (error) {
