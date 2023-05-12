@@ -8,6 +8,7 @@ const collageSchema = new mongoose.Schema({
     minlength: [5, "Panjang email minimal 5 karakter"],
     maxlength: [50, "Panjang email maksimal 50 karakter"],
     lowercase: true,
+    index: true,
     required: [true, "Email tidak boleh kosong"],
     validate: {
       validator: (email) => {
@@ -25,6 +26,7 @@ const collageSchema = new mongoose.Schema({
   },
   username: {
     type: String,
+    index: true,
     minlength: [5, "Panjang username minimal 5 karakter"],
     maxlength: [75, "Panjang username maksimal 75 karakter"],
     required: [true, "Username tidak boleh kosong"],
