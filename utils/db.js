@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-const connectDB = () => {
-  mongoose
+const connectDB = async() => {
+  await mongoose
     .connect(`mongodb+srv://manajemeninformatika:QAtOvwimii0eanhT@sever-hmjmi.ka89kiw.mongodb.net/server-hmjmi?retryWrites=true&w=majority`, {
       bufferCommands: false,
     })
