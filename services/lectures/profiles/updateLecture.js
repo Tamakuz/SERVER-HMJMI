@@ -1,7 +1,6 @@
 import Lecture from "../../../models/lectureModel.js";
-import path from "path";
-import fs from "fs-extra";
 import admin from "firebase-admin";
+import cache from "memory-cache"
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
 
@@ -83,6 +82,7 @@ const updateLecture = async (req, res, next) => {
     }
 
     await lecture.save();
+    cache.del("__express__/api/lecture/" + id);
     responseSuccess(res, lecture);
   } catch (error) {
     console.log(error);

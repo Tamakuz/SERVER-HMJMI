@@ -4,6 +4,7 @@ import responseSuccess from "../../../utils/responseSuccess.js";
 import fs from "fs-extra";
 import path from "path";
 import admin from "firebase-admin";
+import cache from "memory-cache"
 
 const updateWork = async (req, res, next) => {
   try {
@@ -64,6 +65,7 @@ const updateWork = async (req, res, next) => {
 
       //* Simpan data work dan muncul response 200
       await work.save();
+      cache.del("__express__/api/work/" + id);
       responseSuccess(res, work);
     } catch (error) {
       const errors = error.errors;

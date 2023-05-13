@@ -2,6 +2,7 @@ import admin from "firebase-admin";
 import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
+import cache from "memory-cache";
 
 const updateCollage = async (req, res, next) => {
   try {
@@ -92,6 +93,8 @@ const updateCollage = async (req, res, next) => {
 
     // Simpan perubahan ke database
     await collage.save();
+    // Menghapus cache
+    cache.del("__express__/api/collage/" + id);
     // Kirim respon sukses
     responseSuccess(res, collage);
   } catch (error) {
