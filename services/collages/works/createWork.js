@@ -3,6 +3,7 @@ import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
 import admin from "firebase-admin";
+import cache from "memory-cache"
 
 const createWork = async (req, res, next) => {
   try {
@@ -70,6 +71,8 @@ const createWork = async (req, res, next) => {
     collage.workcollage.push(work._id);
     await collage.save();
 
+    cache.del("__express__/api/work/" + collageId);
+    cache.del("__express__/api/collage/" + collageId);
     //* Response success
     responseSuccess(res, work);
   } catch (error) {

@@ -3,6 +3,7 @@ import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
 import admin from "firebase-admin";
+import cache from "memory-cache"
 
 const deleteWork = async (req, res, next) => {
   try {
@@ -32,6 +33,8 @@ const deleteWork = async (req, res, next) => {
 
       //* Menghapus data work dan response
       await work.deleteOne();
+      cache.del("__express__/api/collage/" + collageId);
+      cache.del("__express__/api/work/" + workId);
       responseSuccess(res, { message: "Data berhasil dihapus" });
     } else {
       //* hapus image work
