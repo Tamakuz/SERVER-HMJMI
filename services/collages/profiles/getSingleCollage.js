@@ -7,6 +7,7 @@ const getSingleCollage = async (req, res, next) => {
   const { id } = req.params;
 
   const key = '__express__' + req.originalUrl || req.url;
+  console.log(key);
   const cachedResponse = cache.get(key);
   if (cachedResponse) {
     responseSuccess(res, cachedResponse);
