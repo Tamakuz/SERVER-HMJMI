@@ -21,7 +21,6 @@ const collageSchema = new mongoose.Schema({
   password: {
     type: String,
     minlength: [8, "Panjang password minimal 8 karakter"],
-    maxlength: [100, "Panjang password maksimal 100 karakter"],
     required: [true, "Password tidak boleh kosong"],
   },
   username: {
