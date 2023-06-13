@@ -28,7 +28,7 @@ const createLecture = async (req, res, next) => {
 
     lecture.email = email;
     lecture.username = username;
-    lecture.password = collage.setPassword(password);
+    collage.setPassword(password);
     lecture.createdAt = Date.now();
 
     //! Response validation error

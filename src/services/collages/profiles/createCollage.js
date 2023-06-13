@@ -29,7 +29,7 @@ const createCollage = async (req, res, next) => {
 
     collage.email = email
     collage.username = username
-    collage.password = collage.setPassword(password)
+    collage.setPassword(password)
     collage.status = status
     collage.createdAt = Date.now();
 
