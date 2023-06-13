@@ -2,7 +2,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import compression from "compression";
-import connectDB from "./src/utils/db.js";
 import listener from "./src/bin/index.js";
 import corsConfig from "./src/utils/cors.js";
 import routes from "./src/apis/routes.js";
