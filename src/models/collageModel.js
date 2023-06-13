@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import crypto from "crypto"
 const { ObjectId } = mongoose.Schema;
 
 const collageSchema = new mongoose.Schema({
@@ -70,6 +70,7 @@ const collageSchema = new mongoose.Schema({
       ref: "Work",
     },
   ],
+  salt: { type: String, unique: true },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -79,14 +80,21 @@ const collageSchema = new mongoose.Schema({
   },
 });
 
-collageSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+collageSchema.methods.setPassword = function (password) {
+  this.salt = crypto.randomBytes(16).toString("hex");
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+  this.password = crypto
+    .pbkdf2Sync(password, this.salt, 1000, 64, "sha512")
+    .toString("hex");
+};
+
+collageSchema.methods.validPassword = function (password) {
+  const hash = crypto
+    .pbkdf2Sync(password, this.salt, 1000, 64, "sha512")
+    .toString("hex");
+
+  return this.password === hash;
+};
+
 
 export default mongoose.model("Collage", collageSchema);

@@ -17,7 +17,7 @@ const login = async (req, res, next) => {
     if (lecture) {
       const matchLecture = await bcrypt.compare(password, lecture.password);
 
-      if (!matchLecture) {
+      if (!lecture.validPassword(password)) {
         next(createError(400, "Wrong Password"));
       }
 
@@ -33,7 +33,7 @@ const login = async (req, res, next) => {
     if (collage) {
       const matchCollage = await bcrypt.compare(password, collage.password);
 
-      if (!matchCollage) {
+      if (!collage.validPassword(password)) {
         next(createError(400, "Wrong Password"));
       }
 

@@ -24,12 +24,12 @@ const createLecture = async (req, res, next) => {
       );
     }
 
-    const lecture = new Lecture({
-      email,
-      password,
-      username,
-      createdAt: Date.now(),
-    });
+    const lecture = new Lecture();
+
+    lecture.email = email;
+    lecture.username = username;
+    lecture.password = collage.setPassword(password);
+    lecture.createdAt = Date.now();
 
     //! Response validation error
     try {

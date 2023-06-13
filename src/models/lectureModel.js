@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import crypto from "crypto"
 
 const lectureSchema = new mongoose.Schema({
   email: {
@@ -55,6 +55,7 @@ const lectureSchema = new mongoose.Schema({
       type: String,
     },
   },
+  salt: { type: String, unique: true },
   createdAt: {
     type: Date,
   },
@@ -63,14 +64,20 @@ const lectureSchema = new mongoose.Schema({
   },
 });
 
-lectureSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+lectureSchema.methods.setPassword = function (password) {
+  this.salt = crypto.randomBytes(16).toString("hex");
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+  this.password = crypto
+    .pbkdf2Sync(password, this.salt, 1000, 64, "sha512")
+    .toString("hex");
+};
+
+lectureSchema.methods.validPassword = function (password) {
+  const hash = crypto
+    .pbkdf2Sync(password, this.salt, 1000, 64, "sha512")
+    .toString("hex");
+
+  return this.password === hash;
+};
 
 export default mongoose.model("Lecture", lectureSchema);

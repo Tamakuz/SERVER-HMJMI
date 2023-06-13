@@ -25,13 +25,13 @@ const createCollage = async (req, res, next) => {
     }
 
     //* Setup OBject Data Registerasi
-    const collage = new Collage({
-      email,
-      username,
-      password,
-      status,
-      createdAt: Date.now(),
-    });
+    const collage = new Collage();
+
+    collage.email = email
+    collage.username = username
+    collage.password = collage.setPassword(password)
+    collage.status = status
+    collage.createdAt = Date.now();
 
     //! Response validation error
     try {
