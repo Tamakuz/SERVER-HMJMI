@@ -7,12 +7,10 @@ import listener from "./bin/index.js";
 import corsConfig from "./utils/cors.js";
 import routes from "./apis/routes.js";
 import firebaseConnect from "./firebase/index.js";
+import mongoose from "mongoose";
 
 //* Setup config procces
 dotenv.config();
-
-//* Concect to DB
-connectDB();
 
 //* Firebase storage connect
 firebaseConnect();
@@ -45,6 +43,19 @@ app.use((err, req, res, next) => {
     stack: err.stack,
   });
 });
+
+//* Concect to DB
+mongoose
+  .connect(
+    "mongodb+srv://manajemeninformatika:QAtOvwimii0eanhT@sever-hmjmi.ka89kiw.mongodb.net/server-hmjmi?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((error) => {
+    console.log({ error });
+    process.exit(1);
+  });
 
 //* Runner a Server
 listener({ app });
