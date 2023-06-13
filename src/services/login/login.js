@@ -1,6 +1,5 @@
 import Lecture from "../../models/lectureModel.js";
 import Collage from "../../models/collageModel.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../../config/index.js";
 import createError from "../../utils/error.js";
@@ -15,7 +14,6 @@ const login = async (req, res, next) => {
     const collage = await Collage.findOne({ username: username });
 
     if (lecture) {
-      const matchLecture = await bcrypt.compare(password, lecture.password);
 
       if (!lecture.validPassword(password)) {
         next(createError(400, "Wrong Password"));
@@ -31,7 +29,6 @@ const login = async (req, res, next) => {
     }
 
     if (collage) {
-      const matchCollage = await bcrypt.compare(password, collage.password);
 
       if (!collage.validPassword(password)) {
         next(createError(400, "Wrong Password"));
