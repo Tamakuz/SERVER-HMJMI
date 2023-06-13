@@ -25,6 +25,7 @@ const getLecture = async (req, res, next) => {
     responseSuccess(res, lecture);
   } catch (error) {
     //! Handle error
+    console.log(error);
     next(createError(500, "Server Error"));
   }
 };
