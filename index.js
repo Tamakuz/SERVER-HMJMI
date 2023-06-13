@@ -29,6 +29,9 @@ app.use(compression())
 
 //* Setup routes
 app.use("/api", routes);
+app.use("/", (req, res) => {
+  res.send("Welcome");
+});
 
 //* setup error response
 app.use((err, req, res, next) => {
