@@ -13,12 +13,12 @@ const createCollage = async (req, res, next) => {
     //! Validasi ketika email dan username sudah terdaftar
     if (exsistEmail) {
       return next(
-        createError(500, `Akun dengan email ${email} tersebut sudah terdaftar`)
+        createError(400, `Akun dengan email ${email} tersebut sudah terdaftar`)
       );
     } else if (exsistUsername) {
       return next(
         createError(
-          500,
+          400,
           `Akun dengan username ${username} tersebut sudah terdaftar`
         )
       );
@@ -27,11 +27,15 @@ const createCollage = async (req, res, next) => {
     //* Setup OBject Data Registerasi
     const collage = new Collage();
 
-    collage.email = email
-    collage.username = username
-    collage.setPassword(password)
-    collage.status = status
+    collage.email = email;
+    collage.username = username;
+    collage.status = status;
     collage.createdAt = Date.now();
+    if (password === "") {
+      return next(createError(400, "Password tidak boleh kosong"));
+    } else {
+      collage.setPassword(password);
+    }
 
     //! Response validation error
     try {
