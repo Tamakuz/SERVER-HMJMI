@@ -21,12 +21,13 @@ const collageSchema = new mongoose.Schema({
   password: {
     type: String,
     minlength: [8, "Panjang password minimal 8 karakter"],
-    required: [
-      function () {
-        return this.password !== "";
+    required: [true, "Password tidak boleh kosong"],
+    validate: {
+      validator: function (password) {
+        return password !== "";
       },
-      "Password tidak boleh kosong",
-    ],
+      message: "Password tidak boleh kosong",
+    },
   },
   username: {
     type: String,
