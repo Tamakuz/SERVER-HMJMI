@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import crypto from "crypto"
+import crypto from "crypto";
 const { ObjectId } = mongoose.Schema;
 
 const collageSchema = new mongoose.Schema({
@@ -21,7 +21,12 @@ const collageSchema = new mongoose.Schema({
   password: {
     type: String,
     minlength: [8, "Panjang password minimal 8 karakter"],
-    required: [true, "Password tidak boleh kosong"],
+    required: [
+      function () {
+        return this.password !== "";
+      },
+      "Password tidak boleh kosong",
+    ],
   },
   username: {
     type: String,
@@ -94,6 +99,5 @@ collageSchema.methods.validPassword = function (password) {
 
   return this.password === hash;
 };
-
 
 export default mongoose.model("Collage", collageSchema);
