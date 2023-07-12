@@ -46,12 +46,16 @@ const createWork = async (req, res, next) => {
             { headers: formData.getHeaders() }
           );
 
-          work.thumbnail = response.data.data.url;
-          work.delete_url = response.data.data.delete_url;
-          await work.save();
+          if (response.data && response.data.success) {
+            work.thumbnail = response.data.data.url;
+            work.delete_url = response.data.data.delete_url;
+            await work.save();
+          } else {
+            throw new Error("Upload gagal!");
+          }
         } catch (error) {
           console.log(error);
-          return next(createError(400, "Uplode gagal!"));
+          return next(createError(400, "Upload gagal!"));
         }
       }
     } catch (error) {
