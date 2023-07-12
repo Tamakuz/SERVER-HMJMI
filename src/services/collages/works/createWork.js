@@ -37,7 +37,7 @@ const createWork = async (req, res, next) => {
     try {
       //* Validasi data work
       await work.validate();
-      if (req.file) {
+      if (req.file && req.file.buffer) {
         const base64Image = req.file.buffer.toString("base64");
         console.log(base64Image);
         const formData = new FormData();
