@@ -69,7 +69,7 @@ const createWork = async (req, res, next) => {
       const errors = error.errors;
       let message;
 
-      const requiredProps = ["title", "desc", "link", "thumbnail"];
+      const requiredProps = ["title", "desc", "link"];
       const errorProp = Object.keys(errors).find((prop) =>
         requiredProps.includes(prop)
       );
