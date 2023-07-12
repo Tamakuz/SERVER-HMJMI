@@ -5,8 +5,8 @@ import responseSuccess from "../../../utils/responseSuccess.js";
 import cache from "memory-cache";
 import axios from "axios";
 import FormData from "form-data";
-import fs from "fs-extra"
-import path from "path"
+import fs from "fs-extra";
+import path from "path";
 
 const createWork = async (req, res, next) => {
   try {
@@ -66,16 +66,11 @@ const createWork = async (req, res, next) => {
         }
       }
     } catch (error) {
-      const errors = error.errors;
       let message;
 
-      const requiredProps = ["title", "desc", "link"];
-      const errorProp = Object.keys(errors).find((prop) =>
-        requiredProps.includes(prop)
-      );
-
-      if (errorProp) {
-        message = errors[errorProp].message;
+      if (error.errors) {
+        const errorProp = Object.keys(error.errors)[0];
+        message = error.errors[errorProp].message;
       } else {
         message = error.message;
       }
