@@ -42,21 +42,16 @@ const createWork = async (req, res, next) => {
         console.log(base64Image);
         const formData = new FormData();
         formData.append("image", base64Image);
-        try {
-          const response = await axios.post(
-            `https://api.imgbb.com/1/upload?key=e72ac0f2f6f52e884f10060a27e8919c`,
-            formData,
-            { headers: formData.getHeaders() }
-          );
+        const response = await axios.post(
+          `https://api.imgbb.com/1/upload?key=e72ac0f2f6f52e884f10060a27e8919c`,
+          formData,
+          { headers: formData.getHeaders() }
+        );
 
-          console.log(response);
-          work.thumbnail = response.data.data.url;
-          work.delete_url = response.data.data.delete_url;
-          await work.save();
-        } catch (error) {
-          console.log(error.response.data.error);
-          return next(createError(400, "Upload gagal!"));
-        }
+        console.log(response);
+        work.thumbnail = response.data.data.url;
+        work.delete_url = response.data.data.delete_url;
+        work.save();
       }
     } catch (error) {
       console.log(error);
@@ -72,11 +67,11 @@ const createWork = async (req, res, next) => {
     }
 
     //* Simpan data work ke database
-    await work.save();
+    work.save();
 
     //* Tambahkan reference dari data work ke collection collage
     collage.workcollage.push(work._id);
-    await collage.save();
+    collage.save();
     responseSuccess(res, work);
   } catch (error) {
     console.log(error);
