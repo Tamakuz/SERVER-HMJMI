@@ -49,6 +49,7 @@ const createWork = async (req, res, next) => {
             { headers: formData.getHeaders() }
           );
 
+          console.log(response);
           work.thumbnail = response.data.data.url;
           work.delete_url = response.data.data.delete_url;
           await work.save();
