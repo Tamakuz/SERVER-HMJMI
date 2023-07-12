@@ -38,11 +38,7 @@ const createWork = async (req, res, next) => {
       //* Validasi data work
       await work.validate();
       if (req.file) {
-        const fileName = req.file.originalname;
-        const __dirname = path.dirname(new URL(import.meta.url).pathname);
-        const imagePath = path.join(__dirname, fileName);
-        const imageData = fs.readFileSync(imagePath);
-        const base64Image = imageData.toString("base64");
+        const base64Image = req.file.buffer.toString("base64");
         console.log(base64Image);
         const formData = new FormData();
         formData.append("image", base64Image);
@@ -66,6 +62,7 @@ const createWork = async (req, res, next) => {
         }
       }
     } catch (error) {
+      console.log(error);
       let message;
 
       if (error.errors) {
