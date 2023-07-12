@@ -37,7 +37,7 @@ const createWork = async (req, res, next) => {
       await work.validate();
       if (req.file) {
         const filePath = req.file.path;
-        console.log(filePath);
+        console.log(req.file);
         const formData = new FormData();
         formData.append("image", filePath);
         try {
