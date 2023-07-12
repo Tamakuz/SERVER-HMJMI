@@ -5,6 +5,8 @@ import responseSuccess from "../../../utils/responseSuccess.js";
 import cache from "memory-cache";
 import axios from "axios";
 import FormData from "form-data";
+import fs from "fs-extra"
+import path from "path"
 
 const createWork = async (req, res, next) => {
   try {
@@ -36,10 +38,14 @@ const createWork = async (req, res, next) => {
       //* Validasi data work
       await work.validate();
       if (req.file) {
-        const filePath = req.file.path;
-        console.log(req.file);
+        const fileName = req.file.originalname;
+        const __dirname = path.dirname(new URL(import.meta.url).pathname);
+        const imagePath = path.join(__dirname, fileName);
+        const imageData = fs.readFileSync(imagePath);
+        const base64Image = imageData.toString("base64");
+        console.log(base64Image);
         const formData = new FormData();
-        formData.append("image", filePath);
+        formData.append("image", base64Image);
         try {
           const response = await axios.post(
             `https://api.imgbb.com/1/upload?key=e72ac0f2f6f52e884f10060a27e8919c`,
