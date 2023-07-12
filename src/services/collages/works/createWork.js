@@ -54,7 +54,7 @@ const createWork = async (req, res, next) => {
             throw new Error("Upload gagal!");
           }
         } catch (error) {
-          console.log(error);
+          console.log(error.response.data.error);
           return next(createError(400, "Upload gagal!"));
         }
       }
