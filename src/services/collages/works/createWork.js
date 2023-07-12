@@ -2,8 +2,9 @@ import Work from "./../../../models/workModel.js";
 import Collage from "../../../models/collageModel.js";
 import createError from "../../../utils/error.js";
 import responseSuccess from "../../../utils/responseSuccess.js";
-import admin from "firebase-admin";
-import cache from "memory-cache"
+import cache from "memory-cache";
+import axios from "axios";
+import FormData from "form-data";
 
 const createWork = async (req, res, next) => {
   try {
@@ -35,18 +36,23 @@ const createWork = async (req, res, next) => {
       //* Validasi data work
       await work.validate();
       if (req.file) {
-        const bucket = admin.storage().bucket();
-        const file = req.file;
-        const destination = `works/${file.filename}`;
+        const filePath = req.file.path;
+        const formData = new FormData();
+        formData.append("image", filePath);
+        try {
+          const response = await axios.post(
+            `https://api.imgbb.com/1/upload?key=e72ac0f2f6f52e884f10060a27e8919c`,
+            formData,
+            { headers: formData.getHeaders() }
+          );
 
-        await bucket.upload(file.path, {
-          destination,
-          metadata: { contentType: file.mimetype },
-        });
-
-        work.thumbnail = req.file.filename;
+          work.thumbnail = response.data.data.url;
+          work.delete_url = response.data.data.delete_url;
+          await work.save();
+        } catch (error) {
+          return next(createError(400, "Uplode gagal!"));
+        }
       }
-      await work.save();
     } catch (error) {
       const errors = error.errors;
       let message;
@@ -70,10 +76,6 @@ const createWork = async (req, res, next) => {
     //* Tambahkan reference dari data work ke collection collage
     collage.workcollage.push(work._id);
     await collage.save();
-
-    cache.del("__express__/api/work/" + collageId);
-    cache.del("__express__/api/collage/" + collageId);
-    //* Response success
     responseSuccess(res, work);
   } catch (error) {
     console.log(error);

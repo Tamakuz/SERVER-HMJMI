@@ -21,6 +21,9 @@ const workSchema = new mongoose.Schema({
   thumbnail: {
     type: String,
   },
+  delete_url: {
+    type: String,
+  },
   detailcollage: {
     type: ObjectId,
     ref: "Collage",
