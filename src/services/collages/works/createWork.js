@@ -50,6 +50,7 @@ const createWork = async (req, res, next) => {
           work.delete_url = response.data.data.delete_url;
           await work.save();
         } catch (error) {
+          console.log(error);
           return next(createError(400, "Uplode gagal!"));
         }
       }
