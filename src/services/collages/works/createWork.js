@@ -51,7 +51,7 @@ const createWork = async (req, res, next) => {
         console.log(response);
         work.thumbnail = response.data.data.url;
         work.delete_url = response.data.data.delete_url;
-        work.save();
+        await work.save();
       }
     } catch (error) {
       console.log(error);
@@ -67,7 +67,7 @@ const createWork = async (req, res, next) => {
     }
 
     //* Simpan data work ke database
-    work.save();
+    await work.save();
 
     //* Tambahkan reference dari data work ke collection collage
     collage.workcollage.push(work._id);
